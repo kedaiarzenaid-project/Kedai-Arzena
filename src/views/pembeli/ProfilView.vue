@@ -27,7 +27,7 @@
           <div class='relative w-full h-48 bg-gray-200 rounded-lg overflow-hidden border mb-2'>
             <div id='profileMap' class='w-full h-full'></div>
             <button @click.prevent='detectGPS' type='button' class='absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md z-[400] text-blue-600'>
-              ?? GPS Otomatis
+              📍 GPS Otomatis
             </button>
           </div>
           <p class='text-xs text-gray-400'>Titik saat ini: {{ form.lat || '-' }}, {{ form.lng || '-' }}</p>
@@ -85,7 +85,7 @@ function initMap() {
   
   map = L.map('profileMap').setView([initLat, initLng], 14);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '� OpenStreetMap'
+    attribution: '© OpenStreetMap'
   }).addTo(map);
 
   const icon = L.icon({

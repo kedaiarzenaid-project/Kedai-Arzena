@@ -49,7 +49,7 @@
         <div class='relative w-full h-64 bg-gray-200 rounded-lg overflow-hidden mb-3'>
           <div id='map' class='w-full h-full'></div>
           <button @click.prevent='detectGPS' type='button' class='absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-md z-[400] text-blue-600'>
-            ?? GPS
+            📍 GPS
           </button>
         </div>
 
