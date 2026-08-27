@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class='bg-blue-800 text-white p-4 shadow-md sticky top-0 z-40 flex justify-between items-center'>
       <h1 class='text-xl font-bold flex items-center gap-2'>
-        <span class='bg-white text-blue-800 p-1 rounded'>?????</span> Kasir Arzena
+        Kasir Arzena
       </h1>
       <div class='flex items-center'>
         <button @click='showSettings = true' class='p-2 hover:bg-blue-700 rounded-full transition-colors'>
