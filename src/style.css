@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+
+/* Global Page Transitions */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(15px) scale(0.98);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-15px) scale(0.98);
+}
+
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #f6f7f8 4%, #edeef1 25%, #f6f7f8 36%);
+  background-size: 1000px 100%;
+}

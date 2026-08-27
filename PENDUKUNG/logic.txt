@@ -1,0 +1,35 @@
+buat website POS menggunakan vue.js + supabase + github + supabase
+buat tampilan yang estetik, rapi dan profesional
+web ini memiliki 3 tingkatan user
+1 admin
+2 kasir
+3 pembeli
+
+1. user admin 
+- input produk, harga, stok, dll
+- management user
+- cek detail transaksi, buat laporan harian, bulanan, peritem dll
+- menentukan ongkir berdasarkan jarak
+- buatkan user awal didatabase user : admin | pass : admin
+2. user kasir
+- lihat pesanan dari user/pembeli
+- update proses pesanan (terupdate juga di aplikasi pembeli)
+- cek pembayaran cash / tf (kita akan gunakan payment gatway supaya bisa otamatis update status bayar)
+- mengirimkan notifikasi selesai ke pembeli
+- karna ada fasilitas antar, kita coba buat map entah nanti pakai apa agar membantu pengantaran ke titik pembeli (seperti maxim dll)
+- untuk user kasir nanti akan kita bungkus dengan capacitor agar koneksi dengan printer bluetooth dan maps jadi lebih gampang
+- buatkan user awal user: kasir | pass : kasir
+3. user pembeli
+- nanti ada form regist menggunakan No WA/telp dan nama
+- bisa melihat dan memilih produk
+- melakukan pesanan
+- melakukan chat untuk tanya pesanan
+- bisa memilih bayar menggunakan cash atau tf(payment gateway)
+- bisa memilih di antar atau ambil sendiri
+- aplikasi bisa menentukan titik pembeli agar fasilitas anatr bisa kita gunakan, agar bisa terbaca di maps
+
+system memiliki kemampuan untuk menentukan ongkir dari biaya antar berdasarkan jarak antarnya
+system menggunakan HTTPS agar browser pengguna bisa menjalankan sensor GPS HP
+setelah pesanan berhasil dan siap di anatr buat system bisa mengirim data dan map ke kurir
+kita gunakan Leaflet.js + OpenStreetMap (OSM)
+
