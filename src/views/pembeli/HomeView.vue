@@ -2,7 +2,12 @@
   <div class='min-h-screen bg-gray-50 pb-10'>
     <!-- Header -->
     <header class='bg-green-700 text-white p-4 shadow-md sticky top-0 z-40 flex justify-between items-center'>
-      <h1 class='text-xl font-bold'>Kedai Arzena</h1>
+      <div class='flex items-center gap-3'>
+        <button @click='isSidebarOpen = true' class='p-1 hover:bg-green-800 rounded transition-colors'>
+          <MenuIcon class='w-6 h-6' />
+        </button>
+        <h1 class='text-xl font-bold'>Kedai Arzena</h1>
+      </div>
       <div class='flex items-center gap-4'>
         <!-- Cart Icon -->
         <div class='relative cursor-pointer mr-2' id='cart-icon' @click='goToCheckout'>
@@ -12,17 +17,61 @@
           </span>
         </div>
         
-        <div class='flex gap-2' v-if='authStore.user'>
-          <router-link to='/pesanan' class='w-8 h-8 bg-green-800 rounded-full flex items-center justify-center hover:bg-green-900 transition-colors shadow-sm'>
-            <ClipboardListIcon class='w-4 h-4 text-white' />
-          </router-link>
-          <router-link to='/profil' class='w-8 h-8 bg-green-800 rounded-full flex items-center justify-center hover:bg-green-900 transition-colors shadow-sm'>
-            <UserIcon class='w-4 h-4 text-white' />
-          </router-link>
-        </div>
+        
         <router-link v-else to='/login' class='text-sm font-bold bg-white text-green-700 px-3 py-1 rounded'>Login</router-link>
       </div>
     </header>
+
+    <!-- Sidebar Overlay -->
+    <div v-if='isSidebarOpen' class='fixed inset-0 bg-black/50 z-50 transition-opacity' @click='isSidebarOpen = false'></div>
+    
+    <!-- Sidebar Content (Green Transparent) -->
+    <div class='fixed top-0 left-0 h-full w-64 bg-green-800/90 backdrop-blur-md text-white z-50 transform transition-transform duration-300 shadow-2xl flex flex-col' :class='isSidebarOpen ? "translate-x-0" : "-translate-x-full"'>
+      <div class='p-5 border-b border-white/20 flex justify-between items-center'>
+        <h2 class='text-xl font-bold'>Menu</h2>
+        <button @click='isSidebarOpen = false' class='p-1 hover:bg-white/10 rounded-full'><XIcon class='w-6 h-6'/></button>
+      </div>
+      
+      <div class='p-4 flex-1 flex flex-col gap-2 overflow-y-auto'>
+        <div v-if='authStore.user' class='mb-4 pb-4 border-b border-white/20'>
+          <p class='text-xs text-green-200'>Halo,</p>
+          <p class='font-bold'>{{ authStore.user.name || authStore.user.email }}</p>
+          <p class='text-[10px] bg-white/20 inline-block px-2 py-0.5 rounded mt-1 uppercase'>{{ authStore.role }}</p>
+        </div>
+
+        <router-link to='/' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
+          🏠 Halaman Utama
+        </router-link>
+        
+        <router-link v-if='authStore.user' to='/pesanan' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
+          <ClipboardListIcon class='w-5 h-5'/> Pesanan Saya
+        </router-link>
+        
+        <router-link v-if='authStore.user' to='/profil' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
+          <UserIcon class='w-5 h-5'/> Profil Saya
+        </router-link>
+
+        <div v-if='authStore.role === "admin" || authStore.role === "kasir"' class='my-2 border-t border-white/20 pt-2'>
+          <p class='text-xs text-green-200 mb-2 font-bold px-3 uppercase'>Khusus Staff</p>
+          <router-link v-if='authStore.role === "admin"' to='/admin' class='flex items-center gap-3 p-3 rounded-lg bg-red-600/50 hover:bg-red-600 transition-colors font-medium mb-2'>
+            ⚙️ Dashboard Admin
+          </router-link>
+          <router-link to='/kasir' class='flex items-center gap-3 p-3 rounded-lg bg-blue-600/50 hover:bg-blue-600 transition-colors font-medium'>
+            👨‍🍳 Layar Kasir
+          </router-link>
+        </div>
+      </div>
+
+      <div class='p-4 border-t border-white/20'>
+        <button v-if='authStore.user' @click='authStore.logout(); isSidebarOpen = false' class='w-full p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors font-bold text-left flex items-center gap-3'>
+          🚪 Keluar (Logout)
+        </button>
+        <router-link v-else to='/login' class='w-full p-3 rounded-lg bg-white text-green-800 hover:bg-gray-100 transition-colors font-bold flex items-center justify-center gap-2 text-center block'>
+          Masuk / Login
+        </router-link>
+      </div>
+    </div>
+
 
     <!-- Kategori Filter & Search -->
     <div class='px-4 py-3 bg-white shadow-sm mb-4 sticky top-14 z-30 flex items-center relative h-[56px] overflow-hidden'>
@@ -137,6 +186,7 @@ const activeCategory = ref(null)
 const isLoading = ref(true)
 const isSearching = ref(false)
 const searchQuery = ref('')
+const isSidebarOpen = ref(false)
 const searchInputRef = ref(null)
 
 function toggleSearch() {
