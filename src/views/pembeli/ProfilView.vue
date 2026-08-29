@@ -38,6 +38,20 @@
         </button>
       </form>
 
+      <!-- Form Ganti Password -->
+      <form @submit.prevent='changePassword' class='bg-white p-5 rounded-xl shadow-sm mb-6'>
+        <h2 class='font-bold text-gray-800 mb-4 border-b pb-2'>Keamanan Akun</h2>
+        
+        <div class='mb-4'>
+          <label class='block text-xs font-bold text-gray-700 mb-1'>Password Baru</label>
+          <input v-model='newPassword' type='password' minlength="6" placeholder='Minimal 6 karakter' required class='w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'>
+        </div>
+
+        <button type='submit' class='w-full bg-gray-800 text-white font-bold py-2.5 rounded-lg hover:bg-gray-900 shadow-md' :disabled='isChangingPassword'>
+          {{ isChangingPassword ? 'Memproses...' : 'Ubah Password' }}
+        </button>
+      </form>
+
       <!-- Khusus Admin / Kasir -->
       <button v-if="authStore.role === 'admin' || authStore.role === 'kasir'" @click="router.push('/kasir')" class='w-full mb-4 bg-yellow-50 text-yellow-700 font-bold py-3 rounded-xl hover:bg-yellow-100 shadow-sm border border-yellow-200'>
         Masuk Panel {{ authStore.role === 'admin' ? 'Admin' : 'Kasir' }}
@@ -69,6 +83,9 @@ const form = ref({
   lng: ''
 })
 const isSaving = ref(false)
+const newPassword = ref('')
+const isChangingPassword = ref(false)
+
 let map = null
 let marker = null
 
@@ -79,6 +96,29 @@ async function fetchProfile() {
     form.value.address = data.address || ''
     form.value.lat = data.lat || ''
     form.value.lng = data.lng || ''
+  }
+}
+
+async function changePassword() {
+  if (newPassword.value.length < 6) {
+    alert('Password minimal 6 karakter');
+    return;
+  }
+  
+  try {
+    isChangingPassword.value = true;
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword.value
+    });
+    
+    if (error) throw error;
+    
+    alert('Password berhasil diubah!');
+    newPassword.value = ''; // Reset input
+  } catch (err) {
+    alert('Gagal mengubah password: ' + err.message);
+  } finally {
+    isChangingPassword.value = false;
   }
 }
 
