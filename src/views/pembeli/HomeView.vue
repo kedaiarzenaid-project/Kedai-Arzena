@@ -3,68 +3,37 @@
     <!-- Header -->
     <header class='bg-green-700 text-white p-4 shadow-md sticky top-0 z-40 flex justify-between items-center'>
       <div class='flex items-center gap-3'>
-        <button v-if="authStore.user" @click='isSidebarOpen = true' class='p-1 hover:bg-green-800 rounded transition-colors'>
-          <MenuIcon class='w-6 h-6' />
-        </button>
         <h1 class='text-xl font-bold'>Kedai Arzena</h1>
       </div>
-      <div class='flex items-center gap-4'>
-        <!-- Cart Icon (Only if logged in) -->
-        <div v-if="authStore.user" class='relative cursor-pointer mr-2' id='cart-icon' @click='goToCheckout'>
-          <ShoppingCartIcon class='w-7 h-7 text-white' />
-          <span v-if='cartStore.totalItems > 0' class='absolute -bottom-2 -right-2 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white'>
-            {{ cartStore.totalItems }}
-          </span>
-        </div>
+      <div class='flex items-center gap-2'>
+        <template v-if="authStore.user">
+          <!-- Pesanan -->
+          <router-link to='/pesanan' class='p-2 hover:bg-green-800 rounded-full transition-colors flex items-center justify-center' title="Pesanan Saya">
+            <ClipboardListIcon class='w-6 h-6 text-white' />
+          </router-link>
+          
+          <!-- Profil -->
+          <router-link to='/profil' class='p-2 hover:bg-green-800 rounded-full transition-colors flex items-center justify-center' title="Profil Saya">
+            <UserIcon class='w-6 h-6 text-white' />
+          </router-link>
+
+          <!-- Cart Icon -->
+          <div class='relative cursor-pointer p-2 hover:bg-green-800 rounded-full transition-colors flex items-center justify-center' id='cart-icon' @click='goToCheckout' title="Keranjang">
+            <ShoppingCartIcon class='w-6 h-6 text-white' />
+            <span v-if='cartStore.totalItems > 0' class='absolute top-1 right-1 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white transform translate-x-1/4 -translate-y-1/4'>
+              {{ cartStore.totalItems }}
+            </span>
+          </div>
+        </template>
         
-        <!-- Login Button (Only if NOT logged in) -->
-        <router-link v-else to='/login' class='text-sm font-bold bg-white text-green-700 px-4 py-1.5 rounded-lg shadow-sm hover:bg-green-50 flex items-center gap-2 transition-colors'>
-          <UserIcon class='w-4 h-4' /> Login
-        </router-link>
+        <template v-else>
+          <!-- Login Button (Only if NOT logged in) -->
+          <router-link to='/login' class='text-sm font-bold bg-white text-green-700 px-4 py-1.5 rounded-lg shadow-sm hover:bg-green-50 flex items-center gap-2 transition-colors'>
+            <UserIcon class='w-4 h-4' /> Login
+          </router-link>
+        </template>
       </div>
     </header>
-
-    <!-- Sidebar Overlay -->
-    <div v-if='isSidebarOpen && authStore.user' class='fixed inset-0 bg-black/50 z-50 transition-opacity' @click='isSidebarOpen = false'></div>
-    
-    <!-- Sidebar Content (Green Transparent) -->
-    <div v-if='authStore.user' class='fixed top-0 left-0 h-full w-64 bg-green-800/90 backdrop-blur-md text-white z-50 transform transition-transform duration-300 shadow-2xl flex flex-col' :class='isSidebarOpen ? "translate-x-0" : "-translate-x-full"'>
-      <div class='p-5 border-b border-white/20 flex justify-between items-center'>
-        <h2 class='text-xl font-bold'>Menu</h2>
-        <button @click='isSidebarOpen = false' class='p-1 hover:bg-white/10 rounded-full'><XIcon class='w-6 h-6'/></button>
-      </div>
-      
-      <div class='p-4 flex-1 flex flex-col gap-2 overflow-y-auto'>
-        <div class='mb-4 pb-4 border-b border-white/20'>
-          <p class='text-xs text-green-200'>Halo,</p>
-          <p class='font-bold'>{{ authStore.user.name || authStore.user.email }}</p>
-          <p class='text-[10px] bg-white/20 inline-block px-2 py-0.5 rounded mt-1 uppercase'>{{ authStore.role }}</p>
-        </div>
-
-        <router-link to='/' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
-          <HomeIcon class='w-5 h-5'/> Halaman Utama
-        </router-link>
-        
-        <router-link to='/pesanan' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
-          <ClipboardListIcon class='w-5 h-5'/> Pesanan Saya
-        </router-link>
-        
-        <router-link to='/profil' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
-          <UserIcon class='w-5 h-5'/> Profil Saya
-        </router-link>
-
-        <!-- Khusus Admin / Kasir -->
-        <router-link v-if="authStore.role === 'admin' || authStore.role === 'kasir'" to='/kasir' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-100 transition-colors font-medium mt-4 border border-yellow-500/30'>
-          <ShoppingCartIcon class='w-5 h-5'/> Masuk Panel {{ authStore.role === 'admin' ? 'Admin' : 'Kasir' }}
-        </router-link>
-      </div>
-
-      <div class='p-4 border-t border-white/20'>
-        <button @click='logout' class='w-full bg-red-600/80 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition shadow-md'>
-          Logout
-        </button>
-      </div>
-    </div>
 
     <!-- Filter Kategori Kapsul -->
     <div class='sticky top-[68px] z-30 bg-white shadow-sm px-4 py-3 flex items-center justify-between mb-4'>
@@ -162,7 +131,7 @@ import { useRouter } from 'vue-router'
 import { supabase } from '../../services/supabase'
 import { useAuthStore } from '../../stores/auth'
 import { useCartStore } from '../../stores/cart'
-import { ShoppingCartIcon, UserIcon, SearchIcon, XIcon, ClipboardListIcon, MenuIcon, HomeIcon } from 'lucide-vue-next'
+import { ShoppingCartIcon, UserIcon, SearchIcon, XIcon, ClipboardListIcon } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -174,7 +143,6 @@ const activeCategory = ref(null)
 const isLoading = ref(true)
 const isSearching = ref(false)
 const searchQuery = ref('')
-const isSidebarOpen = ref(false)
 const searchInputRef = ref(null)
 
 function toggleSearch() {
@@ -207,11 +175,6 @@ async function fetchData() {
   const { data: prodData } = await supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false })
   if (prodData) products.value = prodData
   isLoading.value = false
-}
-
-function logout() {
-  isSidebarOpen.value = false
-  authStore.logout()
 }
 
 function goToCheckout() {

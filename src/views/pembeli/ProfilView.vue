@@ -1,7 +1,7 @@
 <template>
   <div class='min-h-screen bg-gray-50 pb-24'>
     <header class='bg-white p-4 shadow-sm flex items-center justify-center sticky top-0 z-40 relative h-16'>
-      <button @click='router.back()' class='absolute left-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200 active:scale-90 transition-transform shadow-sm'>
+      <button @click='router.push("/")' class='absolute left-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200 active:scale-90 transition-transform shadow-sm'>
         <ArrowLeftIcon class='w-5 h-5' />
       </button>
       <h1 class='text-lg font-bold tracking-widest'>PROFIL SAYA</h1>
@@ -26,8 +26,8 @@
           <p class='text-xs text-gray-500 mb-2'>Tekan tombol GPS untuk melacak, atau geser pin merah manual.</p>
           <div class='relative w-full h-48 bg-gray-200 rounded-lg overflow-hidden border mb-2'>
             <div id='profileMap' class='w-full h-full'></div>
-            <button @click.prevent='detectGPS' type='button' class='absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md z-[400] text-blue-600'>
-              📍 GPS Otomatis
+            <button @click.prevent='detectGPS' type='button' class='absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md z-[400] text-blue-600 flex items-center gap-1 font-bold text-sm'>
+              <MapPinIcon class="w-4 h-4"/> GPS Otomatis
             </button>
           </div>
           <p class='text-xs text-gray-400'>Titik saat ini: {{ form.lat || '-' }}, {{ form.lng || '-' }}</p>
@@ -37,6 +37,11 @@
           {{ isSaving ? 'Menyimpan...' : 'Simpan Profil' }}
         </button>
       </form>
+
+      <!-- Khusus Admin / Kasir -->
+      <button v-if="authStore.role === 'admin' || authStore.role === 'kasir'" @click="router.push('/kasir')" class='w-full mb-4 bg-yellow-50 text-yellow-700 font-bold py-3 rounded-xl hover:bg-yellow-100 shadow-sm border border-yellow-200'>
+        Masuk Panel {{ authStore.role === 'admin' ? 'Admin' : 'Kasir' }}
+      </button>
 
       <!-- Logout Button -->
       <button @click='doLogout' class='w-full bg-red-100 text-red-600 font-bold py-3 rounded-xl hover:bg-red-200 shadow-sm border border-red-200'>
@@ -51,7 +56,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import { supabase } from '../../services/supabase'
-import { ArrowLeftIcon } from 'lucide-vue-next'
+import { ArrowLeftIcon, MapPinIcon } from 'lucide-vue-next'
 import L from 'leaflet'
 
 const router = useRouter()
