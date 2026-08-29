@@ -49,6 +49,7 @@
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <button v-if="user.role !== 'admin' && user.role !== 'kasir'" @click="deleteUser(user)" class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md transition-colors mr-2">Hapus</button>
               <button @click="openEditModal(user)" class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md transition-colors">Edit</button>
             </td>
           </tr>
@@ -273,6 +274,28 @@ async function createUser() {
     alert('Sistem keamanan aktif: Sesi Anda telah digantikan oleh pengguna baru. Anda akan diarahkan ke halaman Login.')
     authStore.logout()
     router.push('/login')
+  }
+}
+
+async function deleteUser(user) {
+  if (!confirm(`Yakin ingin menghapus pengguna ${user.name || user.phone}? Profil ini akan dihapus permanen.`)) return
+  
+  isSaving.value = true
+  
+  // Hapus dari public.users (Hanya profilnya saja)
+  const { error } = await supabase.from('users').delete().eq('id', user.id)
+  
+  isSaving.value = false
+  
+  if (error) {
+    if (error.code === '23503') { // Foreign key violation (punya pesanan)
+      alert(`Gagal menghapus: Pengguna ini tidak bisa dihapus karena sudah memiliki riwayat pesanan di database.`)
+    } else {
+      alert('Gagal menghapus pengguna: ' + error.message)
+    }
+  } else {
+    alert('Profil pengguna berhasil dihapus.')
+    await fetchUsers()
   }
 }
 
