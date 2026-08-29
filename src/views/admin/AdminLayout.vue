@@ -7,6 +7,7 @@
         <router-link to='/admin' class='block p-2 rounded hover:bg-green-700' active-class='bg-green-700'>Dashboard</router-link>
         <router-link to='/admin/kategori' class='block p-2 rounded hover:bg-green-700' active-class='bg-green-700'>Kategori</router-link>
         <router-link to='/admin/produk' class='block p-2 rounded hover:bg-green-700' active-class='bg-green-700'>Produk</router-link>
+        <router-link to='/admin/pengguna' class='block p-2 rounded hover:bg-green-700' active-class='bg-green-700'>Kelola Pengguna</router-link>
         <router-link to='/admin/pengaturan' class='block p-2 rounded hover:bg-green-700' active-class='bg-green-700'>Pengaturan</router-link>
       </nav>
       <div class='p-4 border-t border-green-700'>

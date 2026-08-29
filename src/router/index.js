@@ -16,7 +16,8 @@ const routes = [
       { path: '', component: () => import('../views/admin/DashboardView.vue') },
       { path: 'kategori', component: () => import('../views/admin/KategoriView.vue') },
       { path: 'produk', component: () => import('../views/admin/ProdukView.vue') },
-      { path: 'pengaturan', component: () => import('../views/admin/PengaturanView.vue') }
+      { path: 'pengaturan', component: () => import('../views/admin/PengaturanView.vue') },
+      { path: 'pengguna', component: () => import('../views/admin/UsersView.vue') }
     ]
   },
   
