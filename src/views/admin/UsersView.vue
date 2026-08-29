@@ -106,7 +106,7 @@
         <h2 class="text-xl font-bold mb-4">Tambah Pengguna Baru</h2>
         
         <div class="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg mb-4 border border-blue-100">
-          <strong>Perhatian:</strong> Sistem otomatis membuatkan sandi dari Nomor HP. Karena sistem keamanan Supabase, menambahkan user baru dari sini akan otomatis me-logout akun Admin Anda saat ini.
+          <strong>Perhatian:</strong> Karena sistem keamanan enkripsi password Supabase, menambahkan user baru dari sini akan otomatis me-logout akun Admin Anda saat ini.
         </div>
 
         <form @submit.prevent="createUser">
@@ -118,7 +118,11 @@
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP (WhatsApp) <span class="text-red-500">*</span></label>
             <input v-model="addForm.phone" type="text" required placeholder="Contoh: 08123456789" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 border p-2">
-            <p class="text-xs text-gray-500 mt-1">Sandi otomatis sama dengan Nomor HP</p>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password Login <span class="text-red-500">*</span></label>
+            <input v-model="addForm.password" type="password" required minlength="6" placeholder="Minimal 6 karakter" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 border p-2">
           </div>
 
           <div class="mb-6">
@@ -169,6 +173,7 @@ const editForm = ref({
 const addForm = ref({
   name: '',
   phone: '',
+  password: '',
   role: 'user'
 })
 
@@ -193,7 +198,7 @@ function openEditModal(user) {
 }
 
 function openAddModal() {
-  addForm.value = { name: '', phone: '', role: 'user' }
+  addForm.value = { name: '', phone: '', password: '', role: 'user' }
   showAddModal.value = true
 }
 
@@ -229,14 +234,13 @@ async function saveUser() {
 async function createUser() {
   isSaving.value = true
   
-  // Menyesuaikan logika autentikasi bawaan sistem (Nomor HP = Email & Password)
   const phoneClean = addForm.value.phone.trim().replace(/\D/g, '')
   const email = phoneClean + '@kedaiarzena.com'
   
   // 1. Mendaftarkan user ke sistem Auth Supabase
   const { data, error } = await supabase.auth.signUp({
     email: email,
-    password: phoneClean
+    password: addForm.value.password
   })
 
   if (error) {

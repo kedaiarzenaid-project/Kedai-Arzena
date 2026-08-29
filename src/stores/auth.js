@@ -23,24 +23,24 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(phoneRaw) {
+  async function login(phoneRaw, password) {
     const phone = phoneRaw.trim().replace(/\D/g, '')
     const email = phone + '@kedaiarzena.com'
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password: phone
+      password: password
     })
     if (error) throw error
     await fetchProfile(data.user.id)
     redirectBasedOnRole()
   }
 
-  async function register(name, phoneRaw) {
+  async function register(name, phoneRaw, password) {
     const phone = phoneRaw.trim().replace(/\D/g, '')
     const email = phone + '@kedaiarzena.com'
     const { data, error } = await supabase.auth.signUp({
       email,
-      password: phone,
+      password: password,
     })
     if (error) throw error
     
@@ -73,4 +73,3 @@ export const useAuthStore = defineStore('auth', () => {
 
   return { user, role, checkAuth, login, register, logout }
 })
-
