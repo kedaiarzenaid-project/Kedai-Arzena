@@ -3,95 +3,83 @@
     <!-- Header -->
     <header class='bg-green-700 text-white p-4 shadow-md sticky top-0 z-40 flex justify-between items-center'>
       <div class='flex items-center gap-3'>
-        <button @click='isSidebarOpen = true' class='p-1 hover:bg-green-800 rounded transition-colors'>
+        <button v-if="authStore.user" @click='isSidebarOpen = true' class='p-1 hover:bg-green-800 rounded transition-colors'>
           <MenuIcon class='w-6 h-6' />
         </button>
         <h1 class='text-xl font-bold'>Kedai Arzena</h1>
       </div>
       <div class='flex items-center gap-4'>
-        <!-- Cart Icon -->
-        <div class='relative cursor-pointer mr-2' id='cart-icon' @click='goToCheckout'>
+        <!-- Cart Icon (Only if logged in) -->
+        <div v-if="authStore.user" class='relative cursor-pointer mr-2' id='cart-icon' @click='goToCheckout'>
           <ShoppingCartIcon class='w-7 h-7 text-white' />
           <span v-if='cartStore.totalItems > 0' class='absolute -bottom-2 -right-2 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white'>
             {{ cartStore.totalItems }}
           </span>
         </div>
         
-        
-        
+        <!-- Login Button (Only if NOT logged in) -->
+        <router-link v-else to='/login' class='text-sm font-bold bg-white text-green-700 px-4 py-1.5 rounded-lg shadow-sm hover:bg-green-50 flex items-center gap-2 transition-colors'>
+          <UserIcon class='w-4 h-4' /> Login
+        </router-link>
       </div>
     </header>
 
     <!-- Sidebar Overlay -->
-    <div v-if='isSidebarOpen' class='fixed inset-0 bg-black/50 z-50 transition-opacity' @click='isSidebarOpen = false'></div>
+    <div v-if='isSidebarOpen && authStore.user' class='fixed inset-0 bg-black/50 z-50 transition-opacity' @click='isSidebarOpen = false'></div>
     
     <!-- Sidebar Content (Green Transparent) -->
-    <div class='fixed top-0 left-0 h-full w-64 bg-green-800/90 backdrop-blur-md text-white z-50 transform transition-transform duration-300 shadow-2xl flex flex-col' :class='isSidebarOpen ? "translate-x-0" : "-translate-x-full"'>
+    <div v-if='authStore.user' class='fixed top-0 left-0 h-full w-64 bg-green-800/90 backdrop-blur-md text-white z-50 transform transition-transform duration-300 shadow-2xl flex flex-col' :class='isSidebarOpen ? "translate-x-0" : "-translate-x-full"'>
       <div class='p-5 border-b border-white/20 flex justify-between items-center'>
         <h2 class='text-xl font-bold'>Menu</h2>
         <button @click='isSidebarOpen = false' class='p-1 hover:bg-white/10 rounded-full'><XIcon class='w-6 h-6'/></button>
       </div>
       
       <div class='p-4 flex-1 flex flex-col gap-2 overflow-y-auto'>
-        <div v-if='authStore.user' class='mb-4 pb-4 border-b border-white/20'>
+        <div class='mb-4 pb-4 border-b border-white/20'>
           <p class='text-xs text-green-200'>Halo,</p>
           <p class='font-bold'>{{ authStore.user.name || authStore.user.email }}</p>
           <p class='text-[10px] bg-white/20 inline-block px-2 py-0.5 rounded mt-1 uppercase'>{{ authStore.role }}</p>
         </div>
 
         <router-link to='/' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
-          🏠 Halaman Utama
+          <HomeIcon class='w-5 h-5'/> Halaman Utama
         </router-link>
         
-        <router-link v-if='authStore.user' to='/pesanan' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
+        <router-link to='/pesanan' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
           <ClipboardListIcon class='w-5 h-5'/> Pesanan Saya
         </router-link>
         
-        <router-link v-if='authStore.user' to='/profil' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
+        <router-link to='/profil' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/20 transition-colors font-medium'>
           <UserIcon class='w-5 h-5'/> Profil Saya
         </router-link>
 
-        <div v-if='authStore.role === "admin" || authStore.role === "kasir"' class='my-2 border-t border-white/20 pt-2'>
-          <p class='text-xs text-green-200 mb-2 font-bold px-3 uppercase'>Khusus Staff</p>
-          <router-link v-if='authStore.role === "admin"' to='/admin' class='flex items-center gap-3 p-3 rounded-lg bg-red-600/50 hover:bg-red-600 transition-colors font-medium mb-2'>
-            ⚙️ Dashboard Admin
-          </router-link>
-          <router-link to='/kasir' class='flex items-center gap-3 p-3 rounded-lg bg-blue-600/50 hover:bg-blue-600 transition-colors font-medium'>
-            👨‍🍳 Layar Kasir
-          </router-link>
-        </div>
+        <!-- Khusus Admin / Kasir -->
+        <router-link v-if="authStore.role === 'admin' || authStore.role === 'kasir'" to='/kasir' @click='isSidebarOpen = false' class='flex items-center gap-3 p-3 rounded-lg bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-100 transition-colors font-medium mt-4 border border-yellow-500/30'>
+          <ShoppingCartIcon class='w-5 h-5'/> Masuk Panel {{ authStore.role === 'admin' ? 'Admin' : 'Kasir' }}
+        </router-link>
       </div>
 
       <div class='p-4 border-t border-white/20'>
-        <button v-if='authStore.user' @click='authStore.logout(); isSidebarOpen = false' class='w-full p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors font-bold text-left flex items-center gap-3'>
-          🚪 Keluar (Logout)
+        <button @click='logout' class='w-full bg-red-600/80 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition shadow-md'>
+          Logout
         </button>
-        <router-link v-else to='/login' class='w-full p-3 rounded-lg bg-white text-green-800 hover:bg-gray-100 transition-colors font-bold flex items-center justify-center gap-2 text-center block'>
-          Masuk / Login
-        </router-link>
       </div>
     </div>
 
-
-    <!-- Kategori Filter & Search -->
-    <div class='px-4 py-3 bg-white shadow-sm mb-4 sticky top-14 z-30 flex items-center relative h-[56px] overflow-hidden'>
-      
-      <!-- Category Buttons Container -->
-      <div 
-        class='flex gap-2 overflow-x-auto whitespace-nowrap flex-1 transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] w-full no-scrollbar'
-        :class='isSearching ? "-translate-x-full opacity-0 pointer-events-none absolute" : "translate-x-0 opacity-100"'
-        style='padding-right: 50px;'
-      >
+    <!-- Filter Kategori Kapsul -->
+    <div class='sticky top-[68px] z-30 bg-white shadow-sm px-4 py-3 flex items-center justify-between mb-4'>
+      <div class='flex gap-2 overflow-x-auto no-scrollbar py-1 w-full' :class='isSearching ? "opacity-0 pointer-events-none" : "opacity-100"'>
         <button 
-          @click='activeCategory = null' 
-          :class='activeCategory === null ? "bg-green-600 text-white border-green-600" : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"'
+          @click='activeCategory = null'
+          :class='activeCategory === null ? "bg-green-600 text-white border-green-600" : "bg-white text-gray-600 border-gray-300 hover:border-green-500"'
           class='px-3 py-1 rounded-full text-sm font-bold border transition-colors flex-shrink-0'>
           Semua
         </button>
         <button 
-          v-for='cat in categories' :key='cat.id'
+          v-for='cat in categories' 
+          :key='cat.id'
           @click='activeCategory = cat.id'
-          :class='activeCategory === cat.id ? "bg-green-600 text-white border-green-600" : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"'
+          :class='activeCategory === cat.id ? "bg-green-600 text-white border-green-600" : "bg-white text-gray-600 border-gray-300 hover:border-green-500"'
           class='px-3 py-1 rounded-full text-sm font-bold border transition-colors flex-shrink-0'>
           {{ cat.name }}
         </button>
@@ -134,7 +122,7 @@
       </div>
     </div>
 
-    <!-- Grid Produk (Beneran) -->
+    <!-- Grid Produk -->
     <div v-else class='px-4 grid grid-cols-2 md:grid-cols-4 gap-4 relative'>
       <div :id="'prod-card-' + prod.id" v-for='prod in filteredProducts' :key='prod.id' class='bg-white transition-all duration-300 rounded-xl shadow-sm overflow-hidden flex flex-col'>
         <div class='relative aspect-[4/3] w-full bg-gray-50 overflow-hidden'>
@@ -150,7 +138,7 @@
           <div class='mt-auto'>
             <button 
               v-if='prod.stock > 0'
-              @click='(e) => addToCartWithAnim(prod, e)'
+              @click='(e) => handleAddToCart(prod, e)'
               class='w-full bg-green-100 text-green-700 hover:bg-green-600 hover:text-white font-bold py-1.5 rounded-lg text-sm transition-colors'>
               + Keranjang
             </button>
@@ -174,7 +162,7 @@ import { useRouter } from 'vue-router'
 import { supabase } from '../../services/supabase'
 import { useAuthStore } from '../../stores/auth'
 import { useCartStore } from '../../stores/cart'
-import { ShoppingCartIcon, UserIcon, SearchIcon, XIcon, ClipboardListIcon } from 'lucide-vue-next'
+import { ShoppingCartIcon, UserIcon, SearchIcon, XIcon, ClipboardListIcon, MenuIcon, HomeIcon } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -215,19 +203,27 @@ async function fetchData() {
   const { data: catData } = await supabase.from('categories').select('*').order('created_at', { ascending: true })
   if (catData) categories.value = catData
 
+  // Fetch all active products
   const { data: prodData } = await supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false })
   if (prodData) products.value = prodData
   isLoading.value = false
 }
 
+function logout() {
+  isSidebarOpen.value = false
+  authStore.logout()
+}
+
 function goToCheckout() {
-  
+  router.push('/checkout')
+}
+
+function handleAddToCart(prod, event) {
   if (!authStore.user) {
-    alert('Silakan login terlebih dahulu untuk checkout pesanan.')
     router.push('/login')
-  } else {
-    router.push('/checkout')
+    return
   }
+  addToCartWithAnim(prod, event)
 }
 
 function addToCartWithAnim(prod, event) {
@@ -297,7 +293,6 @@ onMounted(() => {
   transition: transform 0.2s ease-in-out;
 }
 </style>
-
 
 <style>
 .no-scrollbar::-webkit-scrollbar {
