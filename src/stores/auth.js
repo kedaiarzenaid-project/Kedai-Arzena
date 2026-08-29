@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
         id: data.user.id,
         name,
         phone,
-        role: 'pembeli'
+        role: 'user'
       }])
       if (insertError) throw insertError
       await fetchProfile(data.user.id)

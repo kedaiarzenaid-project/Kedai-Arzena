@@ -5,9 +5,9 @@ const routes = [
   { path: '/login', component: () => import('../views/LoginView.vue') },
   { path: '/register', component: () => import('../views/RegisterView.vue') },
   { path: '/', component: () => import('../views/pembeli/HomeView.vue'), meta: { requiresAuth: false } },
-  { path: '/checkout', component: () => import('../views/pembeli/CheckoutView.vue'), meta: { requiresAuth: true, role: 'pembeli' } },
-  { path: '/profil', component: () => import('../views/pembeli/ProfilView.vue'), meta: { requiresAuth: true, role: 'pembeli' } },
-  { path: '/pesanan', component: () => import('../views/pembeli/PesananView.vue'), meta: { requiresAuth: true, role: 'pembeli' } },
+  { path: '/checkout', component: () => import('../views/pembeli/CheckoutView.vue'), meta: { requiresAuth: true, role: 'user' } },
+  { path: '/profil', component: () => import('../views/pembeli/ProfilView.vue'), meta: { requiresAuth: true, role: 'user' } },
+  { path: '/pesanan', component: () => import('../views/pembeli/PesananView.vue'), meta: { requiresAuth: true, role: 'user' } },
   { 
     path: '/admin', 
     component: () => import('../views/admin/AdminLayout.vue'),
