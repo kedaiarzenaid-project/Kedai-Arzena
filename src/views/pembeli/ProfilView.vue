@@ -17,6 +17,11 @@
         </div>
 
         <div class='mb-4'>
+          <label class='block text-xs font-bold text-gray-700 mb-1'>Nomor HP (WhatsApp)</label>
+          <input v-model='form.phone' type='tel' required placeholder='Contoh: 08123456789' class='w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'>
+        </div>
+
+        <div class='mb-4'>
           <label class='block text-xs font-bold text-gray-700 mb-1'>Alamat Lengkap</label>
           <textarea v-model='form.address' rows='2' required placeholder='Cth: Jl. Sudirman No 12, RT 01...' class='w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'></textarea>
         </div>
@@ -78,6 +83,7 @@ const authStore = useAuthStore()
 
 const form = ref({
   name: '',
+  phone: '',
   address: '',
   lat: '',
   lng: ''
@@ -93,6 +99,7 @@ async function fetchProfile() {
   const { data } = await supabase.from('users').select('*').eq('id', authStore.user.id).single()
   if (data) {
     form.value.name = data.name || ''
+    form.value.phone = data.phone || ''
     form.value.address = data.address || ''
     form.value.lat = data.lat || ''
     form.value.lng = data.lng || ''
@@ -178,6 +185,7 @@ async function saveProfile() {
     isSaving.value = true
     const { error } = await supabase.from('users').update({
       name: form.value.name,
+      phone: form.value.phone,
       address: form.value.address,
       lat: form.value.lat,
       lng: form.value.lng

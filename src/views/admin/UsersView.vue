@@ -78,6 +78,14 @@
             <textarea v-model="editForm.address" rows="2" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 border p-2"></textarea>
           </div>
 
+          <hr class="my-4 border-gray-200">
+          
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ganti Password (Opsional)</label>
+            <input v-model="editForm.newPassword" type="password" placeholder="Kosongkan jika tidak ingin diganti" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 border p-2">
+            <p class="text-xs text-gray-500 mt-1">Hanya isi jika ingin mengganti sandi pengguna ini.</p>
+          </div>
+
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-1">Jabatan (Hak Akses)</label>
             <select v-model="editForm.role" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 border p-2 uppercase bg-gray-50">
@@ -167,7 +175,8 @@ const editForm = ref({
   name: '',
   phone: '',
   address: '',
-  role: ''
+  role: '',
+  newPassword: ''
 })
 
 const addForm = ref({
@@ -193,7 +202,7 @@ async function fetchUsers() {
 }
 
 function openEditModal(user) {
-  editForm.value = { ...user }
+  editForm.value = { ...user, newPassword: '' }
   showEditModal.value = true
 }
 
@@ -205,6 +214,7 @@ function openAddModal() {
 async function saveUser() {
   isSaving.value = true
   
+  // Update data profil
   const { error } = await supabase
     .from('users')
     .update({
@@ -215,19 +225,43 @@ async function saveUser() {
     })
     .eq('id', editForm.value.id)
 
-  isSaving.value = false
-  
   if (error) {
-    alert('Gagal menyimpan: ' + error.message)
-  } else {
-    showEditModal.value = false
-    await fetchUsers()
-    
-    // If they changed their own profile, update local auth store
-    if (editForm.value.id === authStore.user.id) {
-      authStore.role = editForm.value.role
-      authStore.user.name = editForm.value.name
+    isSaving.value = false
+    alert('Gagal menyimpan profil: ' + error.message)
+    return
+  }
+
+  // Update password jika diisi
+  if (editForm.value.newPassword && editForm.value.newPassword.trim().length > 0) {
+    if (editForm.value.newPassword.length < 6) {
+      isSaving.value = false
+      alert('Password baru harus minimal 6 karakter');
+      return;
     }
+
+    // Panggil RPC function khusus admin
+    const { error: rpcError } = await supabase.rpc('admin_change_user_password', {
+      target_user_id: editForm.value.id,
+      new_password: editForm.value.newPassword
+    })
+
+    if (rpcError) {
+      isSaving.value = false
+      console.error(rpcError)
+      alert('Gagal mengubah password! Pastikan Anda sudah menjalankan script SQL RPC di Supabase: ' + rpcError.message)
+      return
+    }
+  }
+
+  isSaving.value = false
+  showEditModal.value = false
+  alert('Data pengguna berhasil diperbarui!')
+  await fetchUsers()
+  
+  // If they changed their own profile, update local auth store
+  if (editForm.value.id === authStore.user.id) {
+    authStore.role = editForm.value.role
+    authStore.user.name = editForm.value.name
   }
 }
 
