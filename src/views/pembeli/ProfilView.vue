@@ -22,6 +22,11 @@
         </div>
 
         <div class='mb-4'>
+          <label class='block text-xs font-bold text-gray-700 mb-1'>Ganti Password (Opsional)</label>
+          <input v-model='newPassword' type='password' minlength="6" placeholder='Kosongkan jika tidak ingin diganti' class='w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-yellow-50'>
+        </div>
+
+        <div class='mb-4'>
           <label class='block text-xs font-bold text-gray-700 mb-1'>Alamat Lengkap</label>
           <textarea v-model='form.address' rows='2' required placeholder='Cth: Jl. Sudirman No 12, RT 01...' class='w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'></textarea>
         </div>
@@ -39,21 +44,7 @@
         </div>
 
         <button type='submit' class='w-full bg-green-600 text-white font-bold py-2.5 rounded-lg hover:bg-green-700 shadow-md' :disabled='isSaving'>
-          {{ isSaving ? 'Menyimpan...' : 'Simpan Profil' }}
-        </button>
-      </form>
-
-      <!-- Form Ganti Password -->
-      <form @submit.prevent='changePassword' class='bg-white p-5 rounded-xl shadow-sm mb-6'>
-        <h2 class='font-bold text-gray-800 mb-4 border-b pb-2'>Keamanan Akun</h2>
-        
-        <div class='mb-4'>
-          <label class='block text-xs font-bold text-gray-700 mb-1'>Password Baru</label>
-          <input v-model='newPassword' type='password' minlength="6" placeholder='Minimal 6 karakter' required class='w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'>
-        </div>
-
-        <button type='submit' class='w-full bg-gray-800 text-white font-bold py-2.5 rounded-lg hover:bg-gray-900 shadow-md' :disabled='isChangingPassword'>
-          {{ isChangingPassword ? 'Memproses...' : 'Ubah Password' }}
+          {{ isSaving ? 'Menyimpan...' : 'Simpan Profil & Pengaturan' }}
         </button>
       </form>
 
@@ -90,7 +81,6 @@ const form = ref({
 })
 const isSaving = ref(false)
 const newPassword = ref('')
-const isChangingPassword = ref(false)
 
 let map = null
 let marker = null
@@ -106,29 +96,6 @@ async function fetchProfile() {
   }
 }
 
-async function changePassword() {
-  if (newPassword.value.length < 6) {
-    alert('Password minimal 6 karakter');
-    return;
-  }
-  
-  try {
-    isChangingPassword.value = true;
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword.value
-    });
-    
-    if (error) throw error;
-    
-    alert('Password berhasil diubah!');
-    newPassword.value = ''; // Reset input
-  } catch (err) {
-    alert('Gagal mengubah password: ' + err.message);
-  } finally {
-    isChangingPassword.value = false;
-  }
-}
-
 function initMap() {
   if (map) return;
   // Default fallback if no saved lat/lng
@@ -137,7 +104,7 @@ function initMap() {
   
   map = L.map('profileMap').setView([initLat, initLng], 14);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
+    attribution: 'Ac OpenStreetMap'
   }).addTo(map);
 
   const icon = L.icon({
@@ -192,7 +159,20 @@ async function saveProfile() {
     }).eq('id', authStore.user.id)
     
     if (error) throw error
-    alert('Profil berhasil disimpan!')
+
+    // Jika user mengisi password baru, update passwordnya
+    if (newPassword.value && newPassword.value.trim().length > 0) {
+      if (newPassword.value.length < 6) {
+        throw new Error("Password baru minimal 6 karakter");
+      }
+      const { error: passError } = await supabase.auth.updateUser({
+        password: newPassword.value
+      });
+      if (passError) throw passError;
+    }
+
+    alert('Profil dan pengaturan berhasil disimpan!')
+    newPassword.value = ''; // Reset input password setelah sukses
     // Update authStore name memory if needed
     authStore.user.name = form.value.name
   } catch (err) {
@@ -217,4 +197,3 @@ onMounted(async () => {
   initMap()
 })
 </script>
-
