@@ -7,7 +7,7 @@
         <div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <!-- Jam Operasional -->
           <div class='col-span-1 md:col-span-2'>
-            <h3 class='text-lg font-bold text-gray-700 border-b pb-2 mb-4'>?? Jam Operasional</h3>
+            <h3 class='text-lg font-bold text-gray-700 border-b pb-2 mb-4'>Jam Operasional</h3>
             <div class='flex gap-4'>
               <div class='flex-1'>
                 <label class='block text-gray-700 text-sm font-bold mb-2'>Jam Buka (24 Jam)</label>
@@ -22,7 +22,7 @@
 
           <!-- Lokasi & Delivery -->
           <div class='col-span-1 md:col-span-2 mt-4'>
-            <h3 class='text-lg font-bold text-gray-700 border-b pb-2 mb-4'>?? Lokasi & Pengantaran (Delivery)</h3>
+            <h3 class='text-lg font-bold text-gray-700 border-b pb-2 mb-4'>Lokasi & Pengantaran (Delivery)</h3>
             <div class='grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div>
                 <label class='block text-gray-700 text-sm font-bold mb-2'>Garis Lintang (Latitude)</label>
@@ -42,7 +42,7 @@
           <!-- Ongkir Zones -->
           <div class='col-span-1 md:col-span-2 mt-4'>
             <div class='flex justify-between items-center border-b pb-2 mb-4'>
-              <h3 class='text-lg font-bold text-gray-700'>?? Zona Ongkos Kirim</h3>
+              <h3 class='text-lg font-bold text-gray-700'>Zona Ongkos Kirim</h3>
               <button type='button' @click='addOngkirZone' class='text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200'>+ Tambah Zona</button>
             </div>
             
