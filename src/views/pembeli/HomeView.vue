@@ -18,7 +18,7 @@
         </div>
         
         
-        <router-link v-else to='/login' class='text-sm font-bold bg-white text-green-700 px-3 py-1 rounded'>Login</router-link>
+        
       </div>
     </header>
 
