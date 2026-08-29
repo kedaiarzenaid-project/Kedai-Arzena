@@ -12,18 +12,18 @@
             <ClipboardListIcon class='w-6 h-6 text-white' />
           </router-link>
           
-          <!-- Profil -->
-          <router-link to='/profil' class='p-2 hover:bg-green-800 rounded-full transition-colors flex items-center justify-center' title="Profil Saya">
-            <UserIcon class='w-6 h-6 text-white' />
-          </router-link>
-
-          <!-- Cart Icon -->
+          <!-- Cart Icon (Tengah) -->
           <div class='relative cursor-pointer p-2 hover:bg-green-800 rounded-full transition-colors flex items-center justify-center' id='cart-icon' @click='goToCheckout' title="Keranjang">
             <ShoppingCartIcon class='w-6 h-6 text-white' />
             <span v-if='cartStore.totalItems > 0' class='absolute top-1 right-1 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white transform translate-x-1/4 -translate-y-1/4'>
               {{ cartStore.totalItems }}
             </span>
           </div>
+
+          <!-- Profil (Kanan) -->
+          <router-link to='/profil' class='p-2 hover:bg-green-800 rounded-full transition-colors flex items-center justify-center' title="Profil Saya">
+            <UserIcon class='w-6 h-6 text-white' />
+          </router-link>
         </template>
         
         <template v-else>
