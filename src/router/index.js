@@ -48,9 +48,28 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !authStore.user) {
     return next('/login')
   }
+
+  // Jika sudah login tapi mencoba ke halaman login/register
+  if (authStore.user && (to.path === '/login' || to.path === '/register')) {
+    if (authStore.role === 'admin') return next('/admin')
+    if (authStore.role === 'kasir') return next('/kasir')
+    return next('/')
+  }
+
+  // Kunci Admin & Kasir agar tidak bisa masuk ke halaman utama pengunjung (Home, Checkout, Pesanan)
+  // Mereka tetap diizinkan ke /profil jika ingin ganti password/nama (kecuali admin yang punya panel sendiri)
+  if (authStore.user && (authStore.role === 'admin' || authStore.role === 'kasir')) {
+    const isVisitorPage = ['/', '/checkout', '/pesanan'].includes(to.path)
+    if (isVisitorPage) {
+      if (authStore.role === 'admin') return next('/admin')
+      if (authStore.role === 'kasir') return next('/kasir')
+    }
+  }
+
   // Allow admin and kasir to also access pembeli pages if needed, but restrict strictly otherwise
   if (to.meta.role === 'admin' && authStore.role !== 'admin') return next('/')
   if (to.meta.role === 'kasir' && authStore.role !== 'kasir' && authStore.role !== 'admin') return next('/')
+  
   next()
 })
 
