@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb-24">
     <h1 class='text-3xl font-bold text-gray-800 mb-6'>Pengaturan Kedai</h1>
 
     <div class='bg-white p-6 rounded-lg shadow-sm max-w-4xl'>
@@ -23,14 +23,26 @@
           <!-- Lokasi & Delivery -->
           <div class='col-span-1 md:col-span-2 mt-4'>
             <h3 class='text-lg font-bold text-gray-700 border-b pb-2 mb-4'>Lokasi & Pengantaran (Delivery)</h3>
+            
+            <div class='mb-4'>
+              <label class='block text-gray-700 text-sm font-bold mb-2'>Titik Peta Lokasi Toko (GPS)</label>
+              <p class='text-xs text-gray-500 mb-2'>Tekan tombol GPS atau geser pin biru untuk menentukan lokasi toko Anda.</p>
+              <div class='relative w-full h-64 bg-gray-200 rounded-lg overflow-hidden border mb-2'>
+                <div id='shopMap' class='w-full h-full'></div>
+                <button @click.prevent='detectGPS' type='button' class='absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md z-[400] text-blue-600 flex items-center gap-1 font-bold text-sm'>
+                  <MapPinIcon class="w-4 h-4"/> GPS Otomatis
+                </button>
+              </div>
+            </div>
+
             <div class='grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div>
                 <label class='block text-gray-700 text-sm font-bold mb-2'>Garis Lintang (Latitude)</label>
-                <input v-model='settings.shop_lat' type='text' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500'>
+                <input v-model='settings.shop_lat' type='text' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50' @input="updateMapFromInput">
               </div>
               <div>
                 <label class='block text-gray-700 text-sm font-bold mb-2'>Garis Bujur (Longitude)</label>
-                <input v-model='settings.shop_lng' type='text' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500'>
+                <input v-model='settings.shop_lng' type='text' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50' @input="updateMapFromInput">
               </div>
               <div>
                 <label class='block text-gray-700 text-sm font-bold mb-2'>Maksimal Radius (KM)</label>
@@ -62,7 +74,7 @@
 
           <!-- Template WhatsApp -->
           <div class='col-span-1 md:col-span-2 mt-4'>
-            <h3 class='text-lg font-bold text-gray-700 border-b pb-2 mb-4'>💬 Template WhatsApp Kasir</h3>
+            <h3 class='text-lg font-bold text-gray-700 border-b pb-2 mb-4'>Template WhatsApp Kasir</h3>
             
             <div class='mb-4'>
               <label class='block text-gray-700 text-sm font-bold mb-2'>Format Pesan (Diantar / Delivery)</label>
@@ -92,16 +104,83 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { supabase } from '../../services/supabase'
+import { MapPinIcon } from 'lucide-vue-next'
+import L from 'leaflet'
 
 const settings = ref(null)
 const isSaving = ref(false)
+
+let map = null
+let marker = null
 
 async function fetchSettings() {
   const { data } = await supabase.from('settings').select('*').eq('id', 1).single()
   if (data) {
     settings.value = data
+  }
+}
+
+function initMap() {
+  if (map) return;
+  // Default fallback if no saved lat/lng
+  const initLat = settings.value.shop_lat ? parseFloat(settings.value.shop_lat) : -6.200000
+  const initLng = settings.value.shop_lng ? parseFloat(settings.value.shop_lng) : 106.816666
+  
+  map = L.map('shopMap').setView([initLat, initLng], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  const icon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+  });
+
+  marker = L.marker([initLat, initLng], { draggable: true, icon }).addTo(map);
+  
+  marker.on('dragend', function (e) {
+    const pos = marker.getLatLng();
+    settings.value.shop_lat = pos.lat;
+    settings.value.shop_lng = pos.lng;
+  });
+
+  setTimeout(() => map.invalidateSize(), 500)
+}
+
+function detectGPS() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        settings.value.shop_lat = lat;
+        settings.value.shop_lng = lng;
+        if (map && marker) {
+          map.setView([lat, lng], 16);
+          marker.setLatLng([lat, lng]);
+        }
+      },
+      (error) => {
+        alert('Gagal mendeteksi lokasi. Silakan geser pin manual.');
+      }
+    );
+  } else {
+    alert('Browser tidak mendukung GPS');
+  }
+}
+
+function updateMapFromInput() {
+  if (map && marker) {
+    const lat = parseFloat(settings.value.shop_lat)
+    const lng = parseFloat(settings.value.shop_lng)
+    if (!isNaN(lat) && !isNaN(lng)) {
+      map.setView([lat, lng], 16);
+      marker.setLatLng([lat, lng]);
+    }
   }
 }
 
@@ -126,8 +205,9 @@ async function saveSettings() {
   }
 }
 
-onMounted(() => {
-  fetchSettings()
+onMounted(async () => {
+  await fetchSettings()
+  await nextTick()
+  initMap()
 })
 </script>
-
