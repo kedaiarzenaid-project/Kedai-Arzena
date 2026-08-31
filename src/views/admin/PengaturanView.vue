@@ -11,11 +11,11 @@
             <div class='flex gap-4'>
               <div class='flex-1'>
                 <label class='block text-gray-700 text-sm font-bold mb-2'>Jam Buka (24 Jam)</label>
-                <input v-model='settings.open_time' type='time' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500'>
+                <input v-model='settings.open_time' type='time' lang='en-GB' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500'>
               </div>
               <div class='flex-1'>
                 <label class='block text-gray-700 text-sm font-bold mb-2'>Jam Tutup (24 Jam)</label>
-                <input v-model='settings.close_time' type='time' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500'>
+                <input v-model='settings.close_time' type='time' lang='en-GB' required class='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500'>
               </div>
             </div>
           </div>
