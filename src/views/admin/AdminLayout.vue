@@ -36,6 +36,9 @@
         <router-link @click="isSidebarOpen = false" to='/admin/produk' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors' active-class='bg-green-700 font-bold'>
           Produk
         </router-link>
+        <router-link @click="isSidebarOpen = false" to='/admin/transaksi' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors' active-class='bg-green-700 font-bold'>
+          Data Transaksi
+        </router-link>
         <router-link @click="isSidebarOpen = false" to='/admin/pengguna' class='flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors' active-class='bg-green-700 font-bold'>
           Kelola Pengguna
         </router-link>
