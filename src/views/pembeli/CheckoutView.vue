@@ -1,10 +1,10 @@
 <template>
   <div class='min-h-screen bg-gray-50 pb-24'>
-    <header class='bg-white p-4 shadow-sm flex items-center justify-center sticky top-0 z-40 relative h-16'>
-      <button @click='router.back()' class='absolute left-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200 active:scale-90 transition-transform shadow-sm'>
+    <header class='bg-white p-4 shadow-sm flex items-center justify-center sticky top-0 z-[1000] relative h-16'>
+      <button @click='router.push("/")' class='absolute left-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200 active:scale-90 transition-transform shadow-sm'>
         <ArrowLeftIcon class='w-5 h-5' />
       </button>
-      <h1 class='text-lg font-bold tracking-widest'>PESANAN</h1>
+      <h1 class='text-lg font-bold tracking-widest'>CHECKOUT</h1>
     </header>
 
     <div class='p-4 max-w-2xl mx-auto'>

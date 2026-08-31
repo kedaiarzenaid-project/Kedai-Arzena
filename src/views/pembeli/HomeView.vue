@@ -1,7 +1,7 @@
 <template>
   <div class='min-h-screen bg-gray-50 pb-10'>
     <!-- Header -->
-    <header class='bg-green-700 text-white p-4 shadow-md sticky top-0 z-40 flex justify-between items-center'>
+    <header class='bg-green-700 text-white p-4 shadow-md sticky top-0 z-[1000] flex justify-between items-center'>
       <div class='flex items-center gap-3'>
         <h1 class='text-xl font-bold'>Kedai Arzena</h1>
       </div>
@@ -36,7 +36,7 @@
     </header>
 
     <!-- Filter Kategori Kapsul -->
-    <div class='sticky top-[68px] z-30 bg-white shadow-sm px-4 py-3 flex items-center justify-between mb-4'>
+    <div class='sticky top-[68px] z-[990] bg-white shadow-sm px-4 py-3 flex items-center justify-between mb-4'>
       <div class='flex gap-2 overflow-x-auto no-scrollbar py-1 w-full' :class='isSearching ? "opacity-0 pointer-events-none" : "opacity-100"'>
         <button 
           @click='activeCategory = null'

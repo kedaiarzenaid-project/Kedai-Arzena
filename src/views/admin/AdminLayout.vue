@@ -1,7 +1,7 @@
 <template>
   <div class='flex h-screen bg-gray-50 overflow-hidden'>
     <!-- Mobile Header with Hamburger -->
-    <div class="md:hidden fixed top-0 left-0 right-0 h-16 bg-green-800 text-white flex items-center px-4 z-30 shadow-md">
+    <div class="md:hidden fixed top-0 left-0 right-0 h-16 bg-green-800 text-white flex items-center px-4 z-[1000] shadow-md">
       <button @click="isSidebarOpen = true" class="p-2 hover:bg-green-700 rounded-lg transition-colors">
         <MenuIcon class="w-6 h-6" />
       </button>
@@ -12,13 +12,13 @@
     <div 
       v-if="isSidebarOpen" 
       @click="isSidebarOpen = false"
-      class="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity"
+      class="fixed inset-0 bg-black/50 z-[1010] md:hidden transition-opacity"
     ></div>
 
     <!-- Sidebar -->
     <aside 
       :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-      class='fixed md:relative top-0 left-0 w-64 h-full bg-green-900/95 backdrop-blur-sm text-white flex flex-col z-50 transform md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none'
+      class='fixed md:relative top-0 left-0 w-64 h-full bg-green-900/95 backdrop-blur-sm text-white flex flex-col z-[1020] transform md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none'
     >
       <div class='p-5 text-2xl font-bold border-b border-green-800/50 flex justify-between items-center'>
         Arzena Admin
