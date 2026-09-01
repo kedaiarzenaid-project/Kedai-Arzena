@@ -11,16 +11,18 @@
       <!-- Ringkasan Keranjang -->
       <div class='bg-white p-4 rounded-xl shadow-sm mb-4'>
         <h2 class='font-bold text-gray-800 border-b pb-2 mb-3'>Daftar Pesanan</h2>
-        <div v-for='item in cartStore.items' :key='item.id' class='flex justify-between items-center mb-3'>
-          <div>
-            <p class='text-sm font-bold'>{{ item.name }}</p>
+        <div v-for='item in cartStore.items' :key='item.cart_id' class='flex justify-between items-center mb-3'>
+          <div class='flex-1'>
+            <h3 class='font-bold text-sm'>{{ item.name }}</h3>
+            <p v-if="item.rasa" class='text-xs text-blue-600 font-semibold'>Rasa: {{ item.rasa }}</p>
+            <p v-if="item.catatan" class='text-[10px] text-gray-400 italic'>Catatan: {{ item.catatan }}</p>
             <p class='text-xs text-gray-500'>Rp {{ item.price.toLocaleString('id-ID') }} x {{ item.qty }}</p>
           </div>
           <div class='flex items-center gap-2'>
-            <button @click='cartStore.updateQty(item.id, item.qty - 1)' class='w-7 h-7 bg-gray-200 rounded-full font-bold'>-</button>
+            <button @click='cartStore.updateQty(item.cart_id, item.qty - 1)' class='w-7 h-7 bg-gray-200 rounded-full font-bold'>-</button>
             <span class='text-sm font-bold w-4 text-center'>{{ item.qty }}</span>
-            <button @click='cartStore.updateQty(item.id, item.qty + 1)' class='w-7 h-7 bg-green-200 text-green-700 rounded-full font-bold'>+</button>
-            <button @click='cartStore.removeFromCart(item.id)' class='ml-3 text-red-500 hover:text-red-700'><TrashIcon class='w-5 h-5'/></button>
+            <button @click='cartStore.updateQty(item.cart_id, item.qty + 1)' class='w-7 h-7 bg-green-200 text-green-700 rounded-full font-bold'>+</button>
+            <button @click='cartStore.removeFromCart(item.cart_id)' class='ml-3 text-red-500 hover:text-red-700'><TrashIcon class='w-5 h-5'/></button>
           </div>
         </div>
         <div v-if='cartStore.items.length === 0' class='text-center text-sm text-gray-500 py-2'>Keranjang kosong.</div>
@@ -264,6 +266,17 @@ async function processCheckout() {
     const randomNum = Math.floor(1000 + Math.random() * 9000)
     const orderNumber = `ORZ-${dateStr}-${randomNum}`
 
+    // Gabungkan catatan per-item ke catatan utama
+    let compiledNotes = notes.value ? `${notes.value}\n` : ''
+    cartStore.items.forEach(item => {
+      if (item.rasa || item.catatan) {
+        compiledNotes += `- ${item.name} (${item.qty}x): `
+        if (item.rasa) compiledNotes += `Rasa ${item.rasa}. `
+        if (item.catatan) compiledNotes += `Catatan: ${item.catatan}. `
+        compiledNotes += '\n'
+      }
+    })
+
     // Insert Order
     const { data: orderData, error: orderError } = await supabase.from('orders').insert([{
       order_number: orderNumber,
@@ -273,9 +286,9 @@ async function processCheckout() {
       delivery_lat: deliveryType.value === 'antar' ? userLat.value : null,
       delivery_lng: deliveryType.value === 'antar' ? userLng.value : null,
       delivery_address: deliveryType.value === 'antar' ? deliveryAddress.value : null,
-      ongkir: deliveryType.value === 'antar' ? ongkir.value : 0,
+      delivery_cost: deliveryType.value === 'antar' ? ongkir.value : 0,
       total_price: finalPrice.value,
-      notes: notes.value
+      notes: compiledNotes.trim()
     }]).select().single()
 
     if (orderError) throw orderError

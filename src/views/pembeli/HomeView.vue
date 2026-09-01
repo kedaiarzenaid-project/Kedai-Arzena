@@ -122,6 +122,65 @@
     <div v-if='!isLoading && filteredProducts.length === 0' class='text-center text-gray-500 mt-10'>
       Tidak ada produk di kategori ini.
     </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div v-if='showProductModal' class='fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center p-4' @click.self='closeModal'>
+      <div class='bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden flex flex-col relative'>
+        <button @click='closeModal' class='absolute top-3 right-3 bg-white rounded-full p-1 shadow-md text-gray-500 hover:text-red-500 z-10'>
+          <XIcon class='w-5 h-5'/>
+        </button>
+        
+        <div class='aspect-[4/3] w-full bg-gray-100 relative'>
+          <img v-if='selectedProduct.image_url' :src='selectedProduct.image_url' class='w-full h-full object-cover'>
+          <div v-else class='w-full h-full flex items-center justify-center text-gray-400'>No Image</div>
+        </div>
+
+        <div class='p-4 overflow-y-auto max-h-[50vh]'>
+          <h2 class='font-bold text-lg text-gray-800 leading-tight mb-1'>{{ selectedProduct.name }}</h2>
+          <p class='text-green-600 font-bold text-lg mb-3'>Rp {{ selectedProduct.price.toLocaleString('id-ID') }}</p>
+          
+          <div class='mb-4'>
+            <h3 class='font-bold text-sm text-gray-700 mb-1'>Keterangan / Isi:</h3>
+            <p class='text-sm text-gray-600 leading-relaxed'>{{ selectedProduct.description || 'Tidak ada deskripsi detail.' }}</p>
+          </div>
+
+          <div class='mb-4'>
+            <h3 class='font-bold text-sm text-gray-700 mb-2'>Pilihan Rasa:</h3>
+            <div class='flex flex-wrap gap-2'>
+              <button v-for="rasa in ['Original', 'Manis', 'Pedas', 'Pedas Manis']" :key="rasa"
+                @click="selectedRasa = rasa"
+                :class="selectedRasa === rasa ? 'bg-green-600 text-white border-green-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-green-500'"
+                class='px-3 py-1.5 rounded-lg text-sm border transition-colors'>
+                {{ rasa }}
+              </button>
+            </div>
+          </div>
+
+          <div class='mb-4'>
+            <h3 class='font-bold text-sm text-gray-700 mb-1'>Catatan Tambahan:</h3>
+            <textarea v-model="selectedCatatan" placeholder="Cth: tidak usah pakai sayur, tomat, dll" rows="2" class='w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 bg-gray-50'></textarea>
+          </div>
+
+          <div class='mb-4 flex items-center justify-between border-t pt-4'>
+            <h3 class='font-bold text-sm text-gray-700'>Jumlah:</h3>
+            <div class='flex items-center gap-3'>
+              <button @click="selectedQty > 1 && selectedQty--" class='w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-lg hover:bg-gray-200'>-</button>
+              <span class='font-bold w-6 text-center'>{{ selectedQty }}</span>
+              <button @click="selectedQty < selectedProduct.stock && selectedQty++" class='w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold text-lg hover:bg-green-200'>+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class='p-3 border-t bg-gray-50 flex gap-2'>
+          <button @click='closeModal' class='flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 text-sm'>
+            Batal
+          </button>
+          <button @click='confirmAddToCart' class='flex-[2] bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 text-sm shadow-md'>
+            Keranjang
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -144,6 +203,22 @@ const isLoading = ref(true)
 const isSearching = ref(false)
 const searchQuery = ref('')
 const searchInputRef = ref(null)
+
+// Modal State
+const showProductModal = ref(false)
+const selectedProduct = ref(null)
+const selectedQty = ref(1)
+const selectedRasa = ref('Original')
+const selectedCatatan = ref('')
+const selectedEvent = ref(null)
+
+function closeModal() {
+  showProductModal.value = false
+  setTimeout(() => {
+    selectedProduct.value = null
+    selectedEvent.value = null
+  }, 300)
+}
 
 function toggleSearch() {
   isSearching.value = !isSearching.value
@@ -186,10 +261,23 @@ function handleAddToCart(prod, event) {
     router.push('/login')
     return
   }
-  addToCartWithAnim(prod, event)
+  
+  selectedProduct.value = prod
+  selectedEvent.value = event
+  selectedQty.value = 1
+  selectedRasa.value = 'Original'
+  selectedCatatan.value = ''
+  showProductModal.value = true
 }
 
-function addToCartWithAnim(prod, event) {
+function confirmAddToCart() {
+  if (selectedProduct.value) {
+    addToCartWithAnim(selectedProduct.value, selectedEvent.value, selectedQty.value, selectedRasa.value, selectedCatatan.value)
+    closeModal()
+  }
+}
+
+function addToCartWithAnim(prod, event, qty, rasa, catatan) {
   // Cari elemen gambar produk
   const imgEl = document.getElementById('prod-img-' + prod.id)
   const cartIconEl = document.getElementById('cart-icon')
@@ -197,43 +285,41 @@ function addToCartWithAnim(prod, event) {
   const cardEl = document.getElementById('prod-card-' + prod.id)
   if (cardEl) {
     cardEl.style.transform = 'scale(0.95)'
-    setTimeout(() => cardEl.style.transform = 'scale(1)', 200)
+    setTimeout(() => cardEl.style.transform = 'scale(1)', 150)
   }
 
   if (imgEl && cartIconEl) {
-    // Dapatkan posisi koordinat gambar dan ikon keranjang
     const imgRect = imgEl.getBoundingClientRect()
     const cartRect = cartIconEl.getBoundingClientRect()
-
-    // Buat elemen clone untuk animasi
+    
+    // Buat elemen clone gambar
     const clone = imgEl.cloneNode(true)
     clone.style.position = 'fixed'
+    clone.style.zIndex = '9999'
     clone.style.top = imgRect.top + 'px'
     clone.style.left = imgRect.left + 'px'
     clone.style.width = imgRect.width + 'px'
     clone.style.height = imgRect.height + 'px'
-    clone.style.borderRadius = '8px'
-    clone.style.zIndex = '9999'
-    clone.style.transition = 'all 0.9s cubic-bezier(0.25, 1, 0.5, 1)'
-    clone.style.pointerEvents = 'none'
+    clone.style.borderRadius = '0.5rem'
+    clone.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)'
+    clone.style.opacity = '1'
+    
     document.body.appendChild(clone)
-
-    // Memicu reflow
-    void clone.offsetWidth
-
-    // Set tujuan animasi ke ikon keranjang
-    clone.style.top = (cartRect.top + 10) + 'px'
-    clone.style.left = (cartRect.left + 10) + 'px'
-    clone.style.width = '20px'
-    clone.style.height = '20px'
-    clone.style.opacity = '0'
-    clone.style.borderRadius = '50%'
-    clone.style.transform = 'scale(0.1)'
-
+    
+    // Paksa reflow agar transition berjalan
+    clone.getBoundingClientRect()
+    
+    // Tujuan: ke tengah ikon keranjang
+    const destX = cartRect.left + (cartRect.width / 2) - (imgRect.width / 2)
+    const destY = cartRect.top + (cartRect.height / 2) - (imgRect.height / 2)
+    
+    clone.style.transform = `translate(${destX - imgRect.left}px, ${destY - imgRect.top}px) scale(0.1)`
+    clone.style.opacity = '0.5'
+    
     // Setelah animasi selesai, hapus clone dan tambahkan ke Pinia
     setTimeout(() => {
       clone.remove()
-      cartStore.addToCart(prod)
+      cartStore.addToCart(prod, qty, rasa, catatan)
       
       // Efek denyut pada ikon keranjang
       cartIconEl.classList.add('scale-125')
@@ -241,7 +327,7 @@ function addToCartWithAnim(prod, event) {
     }, 900)
   } else {
     // Fallback jika gambar tidak ditemukan
-    cartStore.addToCart(prod)
+    cartStore.addToCart(prod, qty, rasa, catatan)
   }
 }
 
