@@ -43,21 +43,6 @@
         </div>
       </div>
 
-      <!-- Metode Pembayaran -->
-      <div class='bg-white p-4 rounded-xl shadow-sm mb-4' v-if='cartStore.items.length > 0'>
-        <h2 class='font-bold text-gray-800 mb-3'>Metode Pembayaran</h2>
-        <div class='flex gap-3'>
-          <label class='flex-1 border rounded-lg p-3 flex items-center gap-2 cursor-pointer' :class='paymentMethod === "cod" ? "border-green-500 bg-green-50" : ""'>
-            <input type='radio' v-model='paymentMethod' value='cod' class='text-green-600 focus:ring-green-500'>
-            <span class='font-bold text-sm'>Bayar di Tempat (COD)</span>
-          </label>
-          <label class='flex-1 border rounded-lg p-3 flex items-center gap-2 cursor-pointer' :class='paymentMethod === "qris" ? "border-green-500 bg-green-50" : ""'>
-            <input type='radio' v-model='paymentMethod' value='qris' class='text-green-600 focus:ring-green-500'>
-            <span class='font-bold text-sm'>QRIS (Online)</span>
-          </label>
-        </div>
-      </div>
-
       <!-- Delivery Map Section -->
       <div v-if='deliveryType === "antar"' class='bg-white p-4 rounded-xl shadow-sm mb-4'>
         <h2 class='font-bold text-gray-800 mb-2'>Lokasi Pengantaran</h2>
@@ -88,6 +73,21 @@
       <div class='bg-white p-4 rounded-xl shadow-sm mb-4' v-if='cartStore.items.length > 0'>
         <label class='block text-sm font-bold text-gray-700 mb-2'>Catatan Pesanan (Opsional)</label>
         <input v-model='notes' type='text' placeholder='Cth: Pedas, tanpa saos...' class='w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'>
+      </div>
+
+      <!-- Metode Pembayaran -->
+      <div class='bg-white p-4 rounded-xl shadow-sm mb-4' v-if='cartStore.items.length > 0'>
+        <h2 class='font-bold text-gray-800 mb-3'>Metode Pembayaran</h2>
+        <div class='flex gap-3'>
+          <label class='flex-1 border rounded-lg p-3 flex items-center gap-2 cursor-pointer' :class='paymentMethod === "cod" ? "border-green-500 bg-green-50" : ""'>
+            <input type='radio' v-model='paymentMethod' value='cod' class='text-green-600 focus:ring-green-500'>
+            <span class='font-bold text-sm'>Bayar di Tempat (COD)</span>
+          </label>
+          <label class='flex-1 border rounded-lg p-3 flex items-center gap-2 cursor-pointer' :class='paymentMethod === "qris" ? "border-green-500 bg-green-50" : ""'>
+            <input type='radio' v-model='paymentMethod' value='qris' class='text-green-600 focus:ring-green-500'>
+            <span class='font-bold text-sm'>QRIS (Online)</span>
+          </label>
+        </div>
       </div>
 
       <!-- Ringkasan Biaya -->
