@@ -32,10 +32,13 @@
       <!-- Grid Pesanan Simple & Kecil -->
       <div class='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3'>
         <div v-for='order in filteredOrders' :key='order.id' @click='openOrderDetails(order)' 
-             class='bg-white rounded-lg shadow-sm border-l-4 p-3 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors'
+             class='bg-white rounded-lg shadow-sm border-l-4 p-3 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors relative'
              :class='getBorderClass(order.status)'>
           <div>
-            <p class='font-bold text-sm text-gray-800 mb-0.5'>#{{ order.order_number }}</p>
+            <div class="flex items-center gap-2 mb-0.5">
+              <p class='font-bold text-sm text-gray-800'>#{{ order.order_number }}</p>
+              <span v-if="!viewedOrders.includes(order.id)" class="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Belum dibuka"></span>
+            </div>
             <div class='flex items-center gap-1.5 text-[10px] text-gray-500'>
               <span>{{ formatTimeOnly(order.created_at) }}</span>
               <span>&bull;</span>
@@ -161,9 +164,8 @@ const showSettings = ref(false)
 const searchQuery = ref('')
 const filterStatus = ref('semua')
 
-// Mock local state for settings form
-const shopName = ref('Kedai Arzena')
-const shopAddress = ref('Jl. Kebon Kacang Raya No. 1, Jakarta')
+// Track viewed orders locally to show red dot for unread orders
+const viewedOrders = ref(JSON.parse(localStorage.getItem('kasir_viewed_orders') || '[]'))
 
 async function fetchSettings() {
   const { data } = await supabase.from('settings').select('*').eq('id', 1).single()
@@ -196,6 +198,14 @@ const filteredOrders = computed(() => {
 
 function openOrderDetails(order) {
   selectedOrder.value = order
+  
+  // Mark as read
+  if (!viewedOrders.value.includes(order.id)) {
+    viewedOrders.value.push(order.id)
+    // Keep list size reasonable (e.g. 500 max) to prevent unbounded localStorage growth
+    if (viewedOrders.value.length > 500) viewedOrders.value.shift()
+    localStorage.setItem('kasir_viewed_orders', JSON.stringify(viewedOrders.value))
+  }
 }
 
 async function updateStatus(orderId, newStatus) {
