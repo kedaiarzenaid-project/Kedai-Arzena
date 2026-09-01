@@ -76,8 +76,8 @@
     </div>
 
     <!-- MODAL ORDER DETAILS -->
-    <div v-if='selectedOrder' class='fixed inset-0 bg-black bg-opacity-50 z-[1050] flex items-end md:items-center justify-center p-0 md:p-4' @click.self='selectedOrder = null'>
-      <div class='bg-white w-full md:rounded-xl md:max-w-lg shadow-xl overflow-hidden flex flex-col max-h-[85vh] rounded-t-xl'>
+    <div v-if='selectedOrder' class='fixed inset-0 bg-black/20 backdrop-blur-md z-[1050] flex items-center justify-center p-4' @click.self='selectedOrder = null'>
+      <div class='bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]'>
         <div class='p-4 border-b flex justify-between items-center bg-gray-50'>
           <div class='flex items-center gap-2'>
             <h2 class='font-bold text-lg'>#{{ selectedOrder.order_number }}</h2>
@@ -137,8 +137,8 @@
     </div>
 
     <!-- MODAL SETTINGS KASIR -->
-    <div v-if='showSettings' class='fixed inset-0 bg-black bg-opacity-50 z-[1050] flex items-end md:items-center justify-center p-0 md:p-4' @click.self='showSettings = false'>
-      <div class='bg-white w-full md:rounded-xl md:max-w-md shadow-xl overflow-hidden flex flex-col rounded-t-xl'>
+    <div v-if='showSettings' class='fixed inset-0 bg-black/20 backdrop-blur-md z-[1050] flex items-center justify-center p-4' @click.self='showSettings = false'>
+      <div class='bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden flex flex-col'>
         <div class='p-4 border-b flex justify-between items-center bg-gray-50'>
           <h2 class='font-bold text-lg flex items-center gap-2'><SettingsIcon class='w-5 h-5'/> Pengaturan Kasir</h2>
           <button @click='showSettings = false' class='text-gray-400 hover:text-red-500 bg-gray-200 rounded-full p-1'><XIcon class='w-5 h-5'/></button>
