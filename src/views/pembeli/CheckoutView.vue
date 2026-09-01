@@ -286,7 +286,7 @@ async function processCheckout() {
       delivery_lat: deliveryType.value === 'antar' ? userLat.value : null,
       delivery_lng: deliveryType.value === 'antar' ? userLng.value : null,
       delivery_address: deliveryType.value === 'antar' ? deliveryAddress.value : null,
-      delivery_cost: deliveryType.value === 'antar' ? ongkir.value : 0,
+      ongkir: deliveryType.value === 'antar' ? ongkir.value : 0,
       total_price: finalPrice.value,
       notes: compiledNotes.trim()
     }]).select().single()

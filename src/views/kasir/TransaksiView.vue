@@ -105,9 +105,9 @@
               <span><b class='text-blue-700'>{{ item.qty }}x</b> {{ item.products?.name }}</span>
               <span class='text-gray-700 font-medium'>Rp {{ item.subtotal.toLocaleString('id-ID') }}</span>
             </div>
-            <div v-if='selectedOrder.delivery_cost > 0' class='flex justify-between text-sm border-t pt-1.5 mt-1.5'>
+            <div v-if='selectedOrder.ongkir > 0' class='flex justify-between text-sm border-t pt-1.5 mt-1.5'>
               <span class='text-gray-500'>Ongkos Kirim</span>
-              <span class='text-gray-700 font-medium'>Rp {{ selectedOrder.delivery_cost.toLocaleString('id-ID') }}</span>
+              <span class='text-gray-700 font-medium'>Rp {{ selectedOrder.ongkir.toLocaleString('id-ID') }}</span>
             </div>
             <div class='flex justify-between font-bold text-lg border-t pt-2 mt-2 text-green-700'>
               <span>Total</span>

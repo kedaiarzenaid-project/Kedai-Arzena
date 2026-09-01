@@ -126,7 +126,7 @@
           <div class="mb-4 pt-4 border-t text-sm">
             <div class="flex justify-between mb-1" v-if="selectedOrder?.delivery_type === 'antar'">
               <span class="text-gray-600">Ongkir:</span>
-              <span class="font-bold">Rp {{ selectedOrder?.delivery_cost?.toLocaleString('id-ID') }}</span>
+              <span class="font-bold">Rp {{ selectedOrder?.ongkir?.toLocaleString('id-ID') }}</span>
             </div>
             <div class="flex justify-between text-lg mt-2">
               <span class="font-bold">Total Akhir:</span>
@@ -163,7 +163,7 @@
           </div>
           <div class="mb-6">
             <label class="block text-sm font-bold text-gray-700 mb-1">Ongkos Kirim (Rp)</label>
-            <input v-model="editForm.delivery_cost" type="number" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500" :disabled="selectedOrder?.delivery_type !== 'antar'">
+            <input v-model="editForm.ongkir" type="number" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500" :disabled="selectedOrder?.delivery_type !== 'antar'">
             <p class="text-xs text-gray-500 mt-1" v-if="selectedOrder?.delivery_type !== 'antar'">Hanya berlaku untuk pesanan Delivery.</p>
           </div>
           
@@ -201,7 +201,7 @@ const editForm = ref({
   id: null,
   order_number: '',
   status: '',
-  delivery_cost: 0
+  ongkir: 0
 })
 
 async function fetchOrders() {
@@ -268,7 +268,7 @@ function openEditModal(order) {
     id: order.id,
     order_number: order.order_number,
     status: order.status,
-    delivery_cost: order.delivery_cost || 0
+    ongkir: order.ongkir || 0
   }
   showEditModal.value = true
 }
@@ -279,15 +279,15 @@ async function saveEdit() {
     // If delivery cost changed, we need to recalculate total_price
     let newTotal = selectedOrder.value.total_price
     
-    if (selectedOrder.value.delivery_type === 'antar' && editForm.value.delivery_cost !== selectedOrder.value.delivery_cost) {
-      const oldCost = selectedOrder.value.delivery_cost || 0
-      const newCost = Number(editForm.value.delivery_cost)
+    if (selectedOrder.value.delivery_type === 'antar' && editForm.value.ongkir !== selectedOrder.value.ongkir) {
+      const oldCost = selectedOrder.value.ongkir || 0
+      const newCost = Number(editForm.value.ongkir)
       newTotal = newTotal - oldCost + newCost
     }
 
     const updates = {
       status: editForm.value.status,
-      delivery_cost: Number(editForm.value.delivery_cost),
+      ongkir: Number(editForm.value.ongkir),
       total_price: newTotal
     }
 
@@ -298,7 +298,7 @@ async function saveEdit() {
     const idx = orders.value.findIndex(o => o.id === editForm.value.id)
     if (idx !== -1) {
       orders.value[idx].status = editForm.value.status
-      orders.value[idx].delivery_cost = updates.delivery_cost
+      orders.value[idx].ongkir = updates.ongkir
       orders.value[idx].total_price = updates.total_price
     }
     
