@@ -4,7 +4,7 @@
       <button @click='router.push("/")' class='absolute left-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200 active:scale-90 transition-transform shadow-sm'>
         <ArrowLeftIcon class='w-5 h-5' />
       </button>
-      <h1 class='text-lg font-bold tracking-widest'>CHECKOUT</h1>
+      <h1 class='text-lg font-bold tracking-widest'>PESANAN</h1>
     </header>
 
     <div class='p-4 max-w-2xl mx-auto'>
@@ -39,6 +39,21 @@
           <label class='flex-1 border rounded-lg p-3 flex items-center gap-2 cursor-pointer' :class='deliveryType === "antar" ? "border-green-500 bg-green-50" : ""'>
             <input type='radio' v-model='deliveryType' value='antar' class='text-green-600 focus:ring-green-500'>
             <span class='font-bold text-sm'>Diantar (Delivery)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Metode Pembayaran -->
+      <div class='bg-white p-4 rounded-xl shadow-sm mb-4' v-if='cartStore.items.length > 0'>
+        <h2 class='font-bold text-gray-800 mb-3'>Metode Pembayaran</h2>
+        <div class='flex gap-3'>
+          <label class='flex-1 border rounded-lg p-3 flex items-center gap-2 cursor-pointer' :class='paymentMethod === "cod" ? "border-green-500 bg-green-50" : ""'>
+            <input type='radio' v-model='paymentMethod' value='cod' class='text-green-600 focus:ring-green-500'>
+            <span class='font-bold text-sm'>Bayar di Tempat (COD)</span>
+          </label>
+          <label class='flex-1 border rounded-lg p-3 flex items-center gap-2 cursor-pointer' :class='paymentMethod === "qris" ? "border-green-500 bg-green-50" : ""'>
+            <input type='radio' v-model='paymentMethod' value='qris' class='text-green-600 focus:ring-green-500'>
+            <span class='font-bold text-sm'>QRIS (Online)</span>
           </label>
         </div>
       </div>
@@ -118,6 +133,7 @@ const cartStore = useCartStore()
 const authStore = useAuthStore()
 
 const deliveryType = ref('pickup')
+const paymentMethod = ref('cod')
 const notes = ref('')
 const deliveryAddress = ref('')
 const ongkir = ref(0)
@@ -282,6 +298,7 @@ async function processCheckout() {
       order_number: orderNumber,
       user_id: authStore.user.id,
       status: 'menunggu',
+      payment_method: paymentMethod.value,
       delivery_type: deliveryType.value,
       delivery_lat: deliveryType.value === 'antar' ? userLat.value : null,
       delivery_lng: deliveryType.value === 'antar' ? userLng.value : null,

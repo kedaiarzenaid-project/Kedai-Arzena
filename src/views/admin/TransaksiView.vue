@@ -134,9 +134,14 @@
             </div>
           </div>
 
-          <div v-if="selectedOrder?.delivery_type === 'antar'" class="mb-2 p-3 bg-blue-50 rounded-lg text-sm border border-blue-100">
+          <div v-if="selectedOrder?.delivery_type === 'antar'" class="mb-4 p-3 bg-blue-50 rounded-lg text-sm border border-blue-100">
             <p class="font-bold text-blue-800 mb-1">Alamat Pengiriman:</p>
             <p class="text-blue-900">{{ selectedOrder.delivery_address }}</p>
+          </div>
+
+          <div class="mb-2 p-3 bg-gray-50 rounded-lg text-sm border">
+            <p class="text-gray-500 mb-1">Metode Pembayaran:</p>
+            <p class="font-bold uppercase">{{ selectedOrder?.payment_method || 'COD' }}</p>
           </div>
         </div>
       </div>

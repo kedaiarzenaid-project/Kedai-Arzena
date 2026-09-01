@@ -96,6 +96,7 @@
             <p class='mb-1'><span class='text-gray-500 w-20 inline-block'>Waktu</span>: <b>{{ formatDate(selectedOrder.created_at) }}</b></p>
             <p class='mb-1'><span class='text-gray-500 w-20 inline-block'>Pelanggan</span>: <b>{{ selectedOrder.users?.name || 'Walk-in' }} ({{ selectedOrder.users?.phone || '-' }})</b></p>
             <p class='mb-1'><span class='text-gray-500 w-20 inline-block'>Metode</span>: <b>{{ selectedOrder.delivery_type === "antar" ? "Diantar" : "Ambil Sendiri" }}</b></p>
+            <p class='mb-1'><span class='text-gray-500 w-20 inline-block'>Bayar</span>: <b class="uppercase">{{ selectedOrder.payment_method || 'COD' }}</b></p>
             <p v-if='selectedOrder.delivery_type === "antar"' class='mt-2 bg-blue-50 p-2 rounded text-xs'>📌 {{ selectedOrder.delivery_address }}</p>
           </div>
 
