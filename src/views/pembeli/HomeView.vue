@@ -126,19 +126,22 @@
     <!-- PRODUCT DETAIL MODAL -->
     <div v-if='showProductModal' class='fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center p-4' @click.self='closeModal'>
       <div class='bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden flex flex-col relative'>
-        <button @click='closeModal' class='absolute top-3 right-3 bg-white rounded-full p-1 shadow-md text-gray-500 hover:text-red-500 z-10'>
-          <XIcon class='w-5 h-5'/>
-        </button>
         
-        <div class='aspect-[4/3] w-full bg-gray-100 relative'>
-          <img v-if='selectedProduct.image_url' :src='selectedProduct.image_url' class='w-full h-full object-cover'>
-          <div v-else class='w-full h-full flex items-center justify-center text-gray-400'>No Image</div>
+        <div class='p-4 border-b border-gray-100 flex items-start gap-4 relative'>
+          <div class='w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden shadow-inner'>
+            <img v-if='selectedProduct.image_url' :src='selectedProduct.image_url' class='w-full h-full object-cover'>
+            <div v-else class='w-full h-full flex items-center justify-center text-gray-400 text-xs'>No Image</div>
+          </div>
+          <div class='flex-1 pr-8 pt-1'>
+            <h2 class='font-bold text-base sm:text-lg text-gray-800 leading-tight mb-1'>{{ selectedProduct.name }}</h2>
+            <p class='text-green-600 font-bold text-base'>Rp {{ selectedProduct.price.toLocaleString('id-ID') }}</p>
+          </div>
+          <button @click='closeModal' class='absolute top-4 right-4 bg-gray-100 rounded-full p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors'>
+            <XIcon class='w-4 h-4'/>
+          </button>
         </div>
 
-        <div class='p-4 overflow-y-auto max-h-[50vh]'>
-          <h2 class='font-bold text-lg text-gray-800 leading-tight mb-1'>{{ selectedProduct.name }}</h2>
-          <p class='text-green-600 font-bold text-lg mb-3'>Rp {{ selectedProduct.price.toLocaleString('id-ID') }}</p>
-          
+        <div class='p-4 overflow-y-auto max-h-[55vh]'>
           <div class='mb-4'>
             <h3 class='font-bold text-sm text-gray-700 mb-1'>Keterangan / Isi:</h3>
             <p class='text-sm text-gray-600 leading-relaxed'>{{ selectedProduct.description || 'Tidak ada deskripsi detail.' }}</p>
