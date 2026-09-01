@@ -137,48 +137,7 @@
     </div>
 
     <!-- MODAL SETTINGS KASIR -->
-    <div v-if='showSettings' class='fixed inset-0 bg-black/20 backdrop-blur-md z-[1050] flex items-center justify-center p-4' @click.self='showSettings = false'>
-      <div class='bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden flex flex-col'>
-        <div class='p-4 border-b flex justify-between items-center bg-gray-50'>
-          <h2 class='font-bold text-lg flex items-center gap-2'><SettingsIcon class='w-5 h-5'/> Pengaturan Kasir</h2>
-          <button @click='showSettings = false' class='text-gray-400 hover:text-red-500 bg-gray-200 rounded-full p-1'><XIcon class='w-5 h-5'/></button>
-        </div>
-        
-        <div class='p-4 overflow-y-auto max-h-[70vh]'>
-          <!-- Form Cetak Nota -->
-          <h3 class='font-bold text-sm text-gray-700 mb-3 border-b pb-1'>Informasi Struk / Nota</h3>
-          <div class='mb-3'>
-            <label class='block text-xs font-bold text-gray-600 mb-1'>Nama Kedai</label>
-            <input v-model='shopName' type='text' class='w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50'>
-          </div>
-          <div class='mb-3'>
-            <label class='block text-xs font-bold text-gray-600 mb-1'>Alamat Kedai</label>
-            <textarea v-model='shopAddress' rows='2' class='w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50'></textarea>
-          </div>
-
-          <!-- Printer Bluetooth -->
-          <h3 class='font-bold text-sm text-gray-700 mb-3 border-b pb-1 mt-6'>Koneksi Printer Bluetooth</h3>
-          <button class='w-full bg-blue-50 text-blue-700 font-bold py-2 rounded-lg text-sm border border-blue-200 flex items-center justify-center gap-2 mb-2'>
-            <BluetoothIcon class='w-4 h-4'/> Cari & Konek Printer
-          </button>
-          <p class='text-[10px] text-center text-gray-500'>Status: Belum terkoneksi</p>
-
-          <h3 class='font-bold text-sm text-gray-700 mb-3 border-b pb-1 mt-6'>Pengaturan Lainnya</h3>
-          <button @click='goToAdminSettings' class='w-full bg-gray-100 text-gray-600 font-bold py-2 rounded-lg text-sm hover:bg-gray-200 mb-2'>
-            Atur GPS di Admin
-          </button>
-        </div>
-
-        <div class='p-4 border-t bg-gray-50 flex gap-2'>
-          <button @click='showSettings = false' class='flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg hover:bg-green-700 text-sm'>
-            Tutup
-          </button>
-          <button @click='authStore.logout()' class='flex-none bg-red-100 text-red-600 px-4 rounded-lg font-bold hover:bg-red-200 text-sm'>
-            Logout
-          </button>
-        </div>
-      </div>
-    </div>
+    <KasirSettingsModal v-if="showSettings" @close="showSettings = false" />
   </div>
 </template>
 
@@ -187,7 +146,8 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import { supabase } from '../../services/supabase'
-import { SettingsIcon, ShoppingCartIcon, HomeIcon, XIcon, BluetoothIcon, SearchIcon, PlusIcon } from 'lucide-vue-next'
+import { SettingsIcon, ShoppingCartIcon, HomeIcon, XIcon, SearchIcon, PlusIcon } from 'lucide-vue-next'
+import KasirSettingsModal from '../../components/KasirSettingsModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
