@@ -28,6 +28,11 @@ const routes = [
     meta: { requiresAuth: true, role: 'kasir' }
   },
   { 
+    path: '/kasir/transaksi', 
+    component: () => import('../views/kasir/TransaksiView.vue'),
+    meta: { requiresAuth: true, role: 'kasir' }
+  },
+  { 
     path: '/kasir/pos', 
     component: () => import('../views/kasir/PosView.vue'),
     meta: { requiresAuth: true, role: 'kasir' }
